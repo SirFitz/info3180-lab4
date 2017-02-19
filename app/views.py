@@ -42,6 +42,21 @@ def add_file():
 
     return render_template('add_file.html')
 
+
+@app.route('/filelisting/')
+def list():
+    
+    if not session.get('logged_in'):
+        abort(401)
+        
+    file_lst=[]
+    rootdir = os.getcwd()
+    for subdir, dirs, files in os.walk(rootdir + '/app/static/uploads'):
+        for file in files:
+                lst.append(file)
+        return render_template("filelisting.html",file_lst=file_lst)
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
