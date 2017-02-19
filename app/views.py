@@ -24,6 +24,7 @@ def home():
 def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
+  
 
 @app.route('/add-file', methods=['POST', 'GET'])
 def add_file():
@@ -42,20 +43,24 @@ def add_file():
 
     return render_template('add_file.html')
 
-
-@app.route('/filelisting/')
-def list():
-    
-    if not session.get('logged_in'):
+@app.route('/filelisting')
+def filelisting():
+     if not session.get('logged_in'):
         abort(401)
-        
-    file_lst=[]
-    rootdir = os.getcwd()
-    for subdir, dirs, files in os.walk(rootdir + '/app/static/uploads'):
-        for file in files:
-                lst.append(file)
-        return render_template("filelisting.html",file_lst=file_lst)
+    """list files in directory"""
+    return render_template("filelisting.html", file_list=getfiles())  
 
+@app.route('/getfiles')
+def getfiles():
+    """list files in directory"""
+    file_list = []
+    for subdir, dirs, files in os.walk("app/static/uploads"):
+        for file in files:
+            if file[-4:] == '.jpg':
+                file_list.append("""<li> <img src="/static/uploads/{}" alt="picture" </li>""".format(file))
+            else:
+                file_list.append("<li> {} </li>".format(file))
+    return file_list
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
